@@ -1,0 +1,467 @@
+/* --- REGLA DE ORO UNIVERSAL --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* --- Paleta de Colores "Búnker" --- */
+:root {
+  --bunker-black: #121212;
+  --bunker-surface: #1e1e1e;
+  --bunker-border: #333333;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --accent-rust: #d95f02;
+  --status-online: #28a745;
+  --status-online-glow: rgba(40, 167, 69, 0.5);
+  --status-offline: #dc3545;
+  --status-offline-glow: rgba(220, 53, 69, 0.5);
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.App-header {
+  background-color: #161b22;
+  padding: 16px;
+  border-bottom: 1px solid #30363d;
+}
+
+.App-header h1 {
+  font-size: 24px;
+  color: #f0f6fc;
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -12px;
+}
+
+.col {
+  flex: 1;
+  padding: 12px;
+}
+
+.card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
+
+.card-header {
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid #30363d;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-body p {
+  margin: 0 0 8px;
+}
+
+.card-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-body li {
+  padding: 8px 0;
+  border-bottom: 1px solid #30363d;
+}
+
+.card-body li:last-child {
+  border-bottom: none;
+}
+
+pre {
+  background-color: #d3d3d6;
+  padding: 16px;
+  border-radius: 6px;
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 14px;
+}
+
+.text-success {
+  color: #198754;
+}
+.text-danger {
+  color: #dc3545;
+}
+
+/* --- Estilo de la Tarjeta --- */
+.server-info-card {
+  background-color: var(--bunker-surface);
+  border: 1px solid var(--bunker-border);
+  border-top: 3px solid var(--accent-rust);
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif; /* O alguna fuente más tech que te guste */
+  color: var(--text-primary);
+  overflow: hidden; /* Para que el borde del header no se escape */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease-in-out;
+}
+
+.server-info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Header Temático --- */
+.card-header-themed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--bunker-border);
+}
+
+.card-header-themed h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--accent-rust);
+}
+
+.header-icon {
+  color: var(--accent-rust);
+}
+
+/* --- Cuerpo de la Tarjeta --- */
+.card-body-themed {
+  padding: 18px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.info-item span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.info-item p {
+  margin: 4px 0 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.ip-address {
+  font-family: 'Courier New', Courier, monospace; /* Ideal para IPs */
+  color: var(--accent-rust);
+}
+
+/* --- Indicador de Estado --- */
+.server-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.server-status > span:first-child {
+  font-weight: 600;
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 50px; /* Bien redondito */
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+}
+
+.status-online {
+  background-color: var(--status-online);
+  color: white;
+  box-shadow: 0 0 10px var(--status-online-glow);
+}
+
+.status-offline {
+  background-color: var(--status-offline);
+  color: white;
+  box-shadow: 0 0 10px var(--status-offline-glow);
+}
+
+/* --- Última Actualización --- */
+.last-update {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding-top: 10px;
+  border-top: 1px dashed var(--bunker-border);
+}
+
+/* --- Estilos para la Lista de Jugadores --- */
+
+/* Ajustamos el padding del body para que la lista no quede pegada a los bordes */
+.player-list-body {
+  padding: 0;
+}
+
+.player-list {
+  padding: 12px 18px;
+}
+
+.player-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bunker-border);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.player-row:hover {
+  background-color: rgba(
+    217,
+    95,
+    2,
+    0.1
+  ); /* Un hover sutil con el color de acento */
+}
+
+/* Para que la última fila no tenga borde inferior */
+.player-row:last-child {
+  border-bottom: none;
+}
+
+.player-name {
+  font-weight: 500;
+}
+
+/* Para que la píldora de estado no se estire tanto */
+.player-row .status-pill {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+}
+
+/* --- Mensaje de Lista Vacía --- */
+.empty-list-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  min-height: 150px; /* Le damos una altura mínima para que no quede raro */
+  padding: 18px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.empty-list-message p {
+  margin: 0;
+  max-width: 200px;
+  line-height: 1.5;
+}
+
+/* --- Estilos para la Tarjeta de Logs --- */
+
+/* Le sacamos el padding al body para que el contenedor del log ocupe todo el espacio */
+.log-card-body {
+  padding: 0;
+}
+
+.log-container {
+  margin: 0; /* Reseteamos el margen por defecto del <pre> */
+  padding: 16px;
+  background-color: var(
+    --bunker-black
+  ); /* Un fondo bien oscuro, como una terminal de verdad */
+  max-height: 400px; /* ¡CLAVE! Una altura máxima para que no se descontrole */
+  overflow-y: auto; /* El scroll vertical solo aparece si hace falta */
+  font-family: 'Courier New', Courier, monospace; /* Fuente monoespaciada para logs */
+  font-size: 0.75rem;
+  color: #479159; /* El clásico verde fósforo de hacker */
+  white-space: pre-wrap; /* Para que las líneas largas no rompan el layout */
+  word-break: break-all;
+}
+
+/* --- Hacemos la barra de scroll un poco más sexy --- */
+.log-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.log-container::-webkit-scrollbar-track {
+  background: var(--bunker-surface);
+}
+
+.log-container::-webkit-scrollbar-thumb {
+  background-color: var(--accent-rust);
+  border-radius: 4px;
+  border: 2px solid var(--bunker-surface);
+}
+
+.log-container::-webkit-scrollbar-thumb:hover {
+  background-color: #ff8c42; /* Un naranja más brillante al pasar el mouse */
+}
+
+/* --- ESTILOS GLOBALES Y VARIABLES (YA DEBERÍAS TENERLAS) --- */
+:root {
+  --bunker-black: #121212;
+  --bunker-surface: #1e1e1e;
+  --bunker-border: #333333;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --accent-rust: #d95f02;
+  --status-online: #28a745;
+  --status-online-glow: rgba(40, 167, 69, 0.5);
+  --status-offline: #dc3545;
+  --status-offline-glow: rgba(220, 53, 69, 0.5);
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bunker-black);
+  color: var(--text-primary);
+}
+
+/* --- LAYOUT PRINCIPAL DE LA APP --- */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --- HEADER PRINCIPAL TEMÁTICO --- */
+.app-header-themed {
+  padding: 1rem 2rem;
+  background-color: var(--bunker-surface);
+  border-bottom: 2px solid var(--accent-rust);
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.app-header-themed h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--text-primary);
+  text-shadow: 0 0 10px var(--accent-rust);
+}
+
+.app-header-themed span {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- GRILLA DEL DASHBOARD --- */
+.dashboard-grid {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Para tablets y celulares */
+@media (max-width: 990px) {
+  .dashboard-grid {
+    /* Hacemos que la grilla sea de una sola columna */
+    grid-template-columns: 1fr;
+    padding: 1rem; /* Un poco menos de padding en pantallas chicas */
+    gap: 1.5rem; /* Y un poco menos de espacio entre tarjetas */
+  }
+
+  .app-header-themed h1 {
+    font-size: 1.5rem; /* Achicamos un poco el título principal */
+  }
+  
+  .app-header-themed span {
+    font-size: .8rem; /* Achicamos un poco el título principal */
+  }
+}
+
+/* --- PANTALLAS DE ESTADO (CARGA Y ERROR) --- */
+.status-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  padding: 1rem;
+}
+
+.status-screen h1 {
+  color: var(--accent-rust);
+}
+
+.status-screen.error h1 {
+  color: var(--status-offline);
+}
+.status-screen.error p {
+  color: var(--text-secondary);
+  background-color: var(--bunker-surface);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--bunker-border);
+  max-width: 600px;
+}
+
+/* --- ANIMACIÓN DE CARGA (LOADER) --- */
+.loader {
+  border: 6px solid var(--bunker-surface);
+  border-top: 6px solid var(--accent-rust);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
