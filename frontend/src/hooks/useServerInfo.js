@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { socket } from '../services/socketService';
 
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:3001';
+
 export const useServerInfo = () => {
     const [serverInfo, setServerInfo] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -9,7 +11,7 @@ export const useServerInfo = () => {
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/server-info');
+                const response = await fetch(`${SOCKET_URL}/api/server-info`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
