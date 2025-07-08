@@ -21,7 +21,7 @@ async function getLatestLogFile() {
 
         return path.join(logsDir, fileStats[0].file);
     } catch (error) {
-        console.error('Error reading logs directory:', error);
+        console.error(`[${new Date().toLocaleString()}] Error reading logs directory:`, error);
         return null;
     }
 }

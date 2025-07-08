@@ -106,7 +106,7 @@ async function parseLogFile(filePath) {
             lastModified: lastModified.toISOString() // Add last modified timestamp
         };
     } catch (error) {
-        console.error('Error parsing log file:', error);
+        console.error(`[${new Date().toLocaleString()}] Error parsing log file:`, error);
         return { error: 'Error parsing log file' };
     }
 }

@@ -13,12 +13,12 @@ function startLogWatcher(io) {
     });
 
     const emitLogUpdate = async (filePath) => {
-        console.log(`Log file updated`);
+        console.log(`[${new Date().toLocaleString()}] Log file updated`);
         try {
             const data = await parseLogFile(filePath);
             io.emit('log-update', data);
         } catch (error) {
-            console.error(`Error al parsear o emitir el log ${filePath}:`, error);
+            console.error(`[${new Date().toLocaleString()}] Error al parsear o emitir el log ${filePath}:`, error);
             io.emit('log-error', { file: filePath, message: error.message });
         }
     };
@@ -28,17 +28,17 @@ function startLogWatcher(io) {
         try {
             const latestLogFile = await getLatestLogFile();
             if (latestLogFile) {
-                console.log(`Polling`);
+                console.log(`[${new Date().toLocaleString()}] Polling`);
                 await emitLogUpdate(latestLogFile);
             }
         } catch (error) {
-            console.error('Error durante el polling del log más reciente:', error);
+            console.error(`[${new Date().toLocaleString()}] Error durante el polling del log más reciente:`, error);
         }
     };
 
     watcher.on('add', async (filePath) => {
         if (filePath.startsWith(path.join(logsDir, 'output_log_dedi__'))) {
-            console.log(`New log file detected: ${filePath}`);
+            console.log(`[${new Date().toLocaleString()}] New log file detected: ${filePath}`);
             const latestLogFile = await getLatestLogFile();
             if (filePath === latestLogFile) {
                 await emitLogUpdate(filePath);

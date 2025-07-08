@@ -10,9 +10,9 @@ function initializeSocket(server) {
     });
 
     io.on('connection', (socket) => {
-        console.log('a user connected');
+        console.log(`[${new Date().toLocaleString()}] a user connected`);
         socket.on('disconnect', () => {
-            console.log('user disconnected');
+            console.log(`[${new Date().toLocaleString()}] user disconnected`);
         });
     });
 
