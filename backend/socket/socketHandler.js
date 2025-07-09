@@ -1,5 +1,6 @@
 const { Server } = require('socket.io');
 const { corsOrigin } = require('../config');
+const os = require('os');
 
 function initializeSocket(server) {
     const io = new Server(server, {

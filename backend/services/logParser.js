@@ -43,13 +43,14 @@ async function parseLogFile(filePath) {
         }
 
         const events = [];
-        const playerConnectedRegex = /INF Player connected, entityid=(\d+), name=([^,]+),/g;
+        const playerConnectedRegex = /INF PlayerLogin: ([a-zA-Z0-9_]+)/g;
         while ((match = playerConnectedRegex.exec(content)) !== null) {
+            const playerName = match[1].trim();
             events.push({
                 index: match.index,
                 type: 'connect',
-                id: match[1],
-                name: match[2].trim()
+                id: playerName, // Using name as ID since entityid is not available
+                name: playerName
             });
         }
 
@@ -77,9 +78,11 @@ async function parseLogFile(filePath) {
 
         for (const event of events) {
             if (event.type === 'connect') {
-                allPlayers.set(event.name, { id: event.id, name: event.name, status: 'Online' });
+                allPlayers.set(event.name, { id: event.id, name: event.name, status: 'Connected' });
             } else if (event.type === 'join') {
-                if (!allPlayers.has(event.name)) {
+                if (allPlayers.has(event.name)) {
+                    allPlayers.get(event.name).status = 'Online';
+                } else {
                     allPlayers.set(event.name, { id: 'N/A', name: event.name, status: 'Online' });
                 }
             } else if (event.type === 'left') {

@@ -74,26 +74,28 @@ describe('logParser', () => {
         const mockLogPath = 'D:/fake/logs/dir/output_log_dedi__2025-07-09__12-00-00.txt';
         const mockStats = { mtime: new Date() };
 
-        it('should correctly parse a full log file', async () => {
+        it('should correctly parse a full log file with all player status transitions', async () => {
             const logContent = `
 GamePref.ServerName = My Test Server
 GamePref.GameWorld = Navezgane
 GamePref.ServerMaxPlayerCount = 8
-GamePref.XPMultiplier = 100
-GamePref.LootAbundance = 150
-GamePref.DayNightLength = 60
-GamePref.BlockDamageAI = 120
-GamePref.TelnetPort = 8081
-GamePref.WebDashboardPort = 8082
 [EOS] Session address: 127.0.0.1
 [EOS] Registering server
-INF Player connected, entityid=1, name=Player1,
+
+// Player 1: Connects, joins, and then leaves. Final status: Offline
+INF PlayerLogin: Player1
 GMSG: Player 'Player1' joined the game
-INF Player connected, entityid=2, name=Player2,
-GMSG: Player 'Player2' joined the game
 GMSG: Player 'Player1' left the game
-[EOS] Server unregistered
-[EOS] Registering server
+
+// Player 2: Connects and joins. Final status: Online
+INF PlayerLogin: Player2
+GMSG: Player 'Player2' joined the game
+
+// Player 3: Only connects. Final status: Connected
+INF PlayerLogin: Player3
+
+// Player 4: Joins without a connect event. Final status: Online
+GMSG: Player 'Player4' joined the game
             `;
             fsp.stat.mockResolvedValue(mockStats);
             fsp.readFile.mockResolvedValue(logContent);
@@ -105,9 +107,11 @@ GMSG: Player 'Player1' left the game
             expect(result.maxPlayers).toBe(8);
             expect(result.publicIp).toBe('127.0.0.1');
             expect(result.serverStatus).toBe('Online');
-            expect(result.players).toHaveLength(2);
-            expect(result.players).toContainEqual({ id: '1', name: 'Player1', status: 'Offline' });
-            expect(result.players).toContainEqual({ id: '2', name: 'Player2', status: 'Online' });
+            expect(result.players).toHaveLength(4);
+            expect(result.players).toContainEqual({ id: 'Player1', name: 'Player1', status: 'Offline' });
+            expect(result.players).toContainEqual({ id: 'Player2', name: 'Player2', status: 'Online' });
+            expect(result.players).toContainEqual({ id: 'Player3', name: 'Player3', status: 'Connected' });
+            expect(result.players).toContainEqual({ id: 'N/A', name: 'Player4', status: 'Online' });
             expect(result.lastModified).toBe(mockStats.mtime.toISOString());
         });
 

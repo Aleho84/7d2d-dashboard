@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const {getServerIP} = require('./utils/getServerIP');
 const http = require('http');
-const os = require('os');
 const { serverPort, corsOrigin } = require('./config');
 const { initializeSocket } = require('./socket/socketHandler');
 const { startLogWatcher } = require('./services/logWatcher');
@@ -21,20 +21,7 @@ startLogWatcher(io);
 // Use API routes
 app.use('/api', apiRoutes);
 
-server.listen(serverPort, () => {
-    const networkInterfaces = os.networkInterfaces();
-    let ipAddress = 'localhost';
-
-    for (const interfaceName in networkInterfaces) {
-        const interfaces = networkInterfaces[interfaceName];
-        for (const iface of interfaces) {
-            if (iface.family === 'IPv4' && !iface.internal) {
-                ipAddress = iface.address;
-                break;
-            }
-        }
-        if (ipAddress !== 'localhost') break;
-    }
-
+server.listen(serverPort, () => {    
+    let ipAddress = getServerIP();
     console.log(`[${new Date().toLocaleString()}] Backend server listening at http://${ipAddress}:${serverPort}`);
 });

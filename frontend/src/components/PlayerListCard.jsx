@@ -2,10 +2,14 @@ import React from 'react';
 import { FiUsers, FiSlash } from 'react-icons/fi';
 
 const PlayerListCard = ({ players }) => {
+  const statusOrder = { 'Online': 0, 'Connected': 1, 'Offline': 2 };
+
   const sortedPlayers = players
     ? [...players].sort((a, b) => {
-        if (a.status === b.status) return a.name.localeCompare(b.name);
-        return a.status === 'Online' ? -1 : 1;
+        if (a.status !== b.status) {
+          return statusOrder[a.status] - statusOrder[b.status];
+        }
+        return a.name.localeCompare(b.name);
       })
     : [];
 
@@ -25,6 +29,8 @@ const PlayerListCard = ({ players }) => {
                   className={`status-pill ${
                     player.status === 'Online'
                       ? 'status-online'
+                      : player.status === 'Connected'
+                      ? 'status-connected'
                       : 'status-offline'
                   }`}
                 >
