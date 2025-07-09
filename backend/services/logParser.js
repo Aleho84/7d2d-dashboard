@@ -79,7 +79,9 @@ async function parseLogFile(filePath) {
             if (event.type === 'connect') {
                 allPlayers.set(event.name, { id: event.id, name: event.name, status: 'Online' });
             } else if (event.type === 'join') {
-                allPlayers.set(event.name, { id: 'N/A', name: event.name, status: 'Online' });
+                if (!allPlayers.has(event.name)) {
+                    allPlayers.set(event.name, { id: 'N/A', name: event.name, status: 'Online' });
+                }
             } else if (event.type === 'left') {
                 if (allPlayers.has(event.name)) {
                     allPlayers.get(event.name).status = 'Offline';
