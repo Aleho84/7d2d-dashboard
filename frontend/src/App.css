@@ -298,22 +298,54 @@ body {
 .dashboard-grid {
   flex-grow: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: 2rem;
-  padding: 2rem;
+  gap: 1.5rem;
+  padding: 1.5rem;
   width: 100%;
-  max-width: 1600px;
+  max-width: 1800px; /* Aumentamos el ancho máximo para pantallas grandes */
   margin: 0 auto;
+
+  /* --- Layout para Móvil (por defecto, una columna) --- */
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "server-info"
+    "players"
+    "settings"
+    "telnet"
+    "log";
+}
+
+/* Asignamos cada tarjeta a su área de grid */
+.grid-item-server-info { grid-area: server-info; }
+.grid-item-players { grid-area: players; }
+.grid-item-settings { grid-area: settings; }
+.grid-item-telnet { grid-area: telnet; }
+.grid-item-log { grid-area: log; }
+
+/* --- Layout para Tablets (a partir de 768px) --- */
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "server-info players"
+      "settings settings"
+      "telnet telnet"
+      "log log";
+  }
+}
+
+/* --- Layout para Desktops (a partir de 1200px) --- */
+@media (min-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "server-info players settings"
+      "log log telnet"
+      "log log telnet";
+  }
 }
 
 /* Para tablets y celulares */
 @media (max-width: 990px) {
-  .dashboard-grid {
-    /* Hacemos que la grilla sea de una sola columna */
-    grid-template-columns: 1fr;
-    padding: 1rem; /* Un poco menos de padding en pantallas chicas */
-    gap: 1.5rem; /* Y un poco menos de espacio entre tarjetas */
-  }
 
   .app-header-themed h1 {
     font-size: 1.5rem; /* Achicamos un poco el título principal */
@@ -369,4 +401,101 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.grid-item-telnet {
+    grid-area: telnet;
+}
+
+/* Telnet Console Card */
+.telnet-console-card {
+    background-color: var(--bunker-surface);
+    border: 1px solid var(--bunker-border);
+    border-top: 3px solid var(--accent-rust);
+    border-radius: 8px;
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-primary);
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.telnet-console-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+.telnet-history {
+    height: 250px;
+    overflow-y: auto;
+    background-color: var(--bunker-black);
+    padding: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    border-bottom: 1px solid var(--bunker-border);
+}
+
+.history-line {
+    display: flex;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.history-line.command {
+    color: #1abc9c;
+}
+
+.history-line.response {
+    color: var(--text-primary);
+}
+
+.history-line.error {
+    color: var(--status-offline);
+}
+
+.history-line .prompt {
+    margin-right: 8px;
+    color: var(--text-secondary);
+}
+
+.telnet-input-area {
+    display: flex;
+    padding: 10px;
+    background-color: var(--bunker-surface);
+}
+
+.telnet-input {
+    flex-grow: 1;
+    background-color: #333;
+    border: 1px solid var(--bunker-border);
+    color: var(--text-primary);
+    padding: 10px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.telnet-input:focus {
+    outline: none;
+    border-color: var(--accent-rust);
+}
+
+.telnet-send-btn {
+    background-color: var(--accent-rust);
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.telnet-send-btn:hover {
+    background-color: #d95f02;
+}
+
+.telnet-send-btn:disabled {
+    background-color: var(--text-secondary);
+    cursor: not-allowed;
 }

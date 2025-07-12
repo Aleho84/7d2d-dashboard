@@ -1,6 +1,7 @@
 const { Server } = require('socket.io');
 const { corsOrigin } = require('../config');
 const os = require('os');
+const { executeTelnetCommand } = require('../services/telnetService');
 
 function initializeSocket(server) {
     const io = new Server(server, {
@@ -16,6 +17,15 @@ function initializeSocket(server) {
         // Emit hardware info on connection and then every 30 seconds
         emitHardwareInfo(socket);
         const interval = setInterval(() => emitHardwareInfo(socket), 30000);
+
+        socket.on('execute-telnet-command', async (command) => {
+            try {
+                const response = await executeTelnetCommand(command);
+                socket.emit('telnet-response', response);
+            } catch (error) {
+                socket.emit('telnet-error', error.message);
+            }
+        });
 
         socket.on('disconnect', () => {
             console.log(`[${new Date().toLocaleString()}] user disconnected`);

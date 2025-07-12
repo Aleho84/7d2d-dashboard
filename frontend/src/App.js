@@ -5,6 +5,7 @@ import ServerInfoCard from './components/ServerInfoCard';
 import GameSettingsCard from './components/GameSettingsCard';
 import PlayerListCard from './components/PlayerListCard';
 import RawLogCard from './components/RawLogCard';
+import TelnetConsole from './components/TelnetConsole';
 import { FiAlertTriangle } from 'react-icons/fi';
 
 function App() {
@@ -21,12 +22,12 @@ function App() {
     }
 
     // Un estado de error que se vea como una alerta de verdad
-    if (error || serverInfo.error) {
+    if (error || !serverInfo) {
         return (
             <div className="status-screen error">
                 <FiAlertTriangle size={48} />
                 <h1>🧟 Fallo en la conexión</h1>
-                <p>{error || serverInfo.error}</p>
+                <p>{error || (serverInfo && serverInfo.error) || "No se pudo obtener la información del servidor."}</p>
             </div>
         );
     }
@@ -38,7 +39,6 @@ function App() {
                 <span>Los Tokones de Tokonas</span>
             </header>
             <main className="dashboard-grid">
-                {/* Organizamos las tarjetas en áreas para un layout más complejo si queremos en el futuro */}
                 <div className="grid-item grid-item-server-info">
                     <ServerInfoCard serverInfo={serverInfo} hardwareInfo={hardwareInfo} />
                 </div>
@@ -50,6 +50,9 @@ function App() {
                 </div>
                 <div className="grid-item grid-item-log">
                     <RawLogCard rawLog={serverInfo.rawLog} />
+                </div>
+                <div className="grid-item grid-item-telnet">
+                    <TelnetConsole />
                 </div>
             </main>
         </div>
