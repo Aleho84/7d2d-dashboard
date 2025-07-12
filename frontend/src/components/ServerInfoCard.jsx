@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiServer, FiWifi, FiWifiOff } from 'react-icons/fi';
 
-const ServerInfoCard = ({ serverInfo }) => {
+const ServerInfoCard = ({ serverInfo, hardwareInfo }) => {
   const isOnline = serverInfo.serverStatus === 'Online';
 
   return (
@@ -36,6 +36,18 @@ const ServerInfoCard = ({ serverInfo }) => {
             <span>Telnet Port:</span>
             <p>{serverInfo.telnetPort}</p>
           </div>
+          {hardwareInfo && (
+            <>
+              <div className="info-item">
+                <span>RAM Total:</span>
+                <p>{hardwareInfo.ram.total}</p>
+              </div>
+              <div className="info-item">
+                <span>RAM Libre:</span>
+                <p>{hardwareInfo.ram.free}</p>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="server-status">

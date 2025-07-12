@@ -8,7 +8,7 @@ import RawLogCard from './components/RawLogCard';
 import { FiAlertTriangle } from 'react-icons/fi';
 
 function App() {
-    const { serverInfo, loading, error } = useServerInfo();
+    const { serverInfo, hardwareInfo, loading, error } = useServerInfo();
 
     // Un estado de carga que no sea un simple texto
     if (loading) {
@@ -40,7 +40,7 @@ function App() {
             <main className="dashboard-grid">
                 {/* Organizamos las tarjetas en áreas para un layout más complejo si queremos en el futuro */}
                 <div className="grid-item grid-item-server-info">
-                    <ServerInfoCard serverInfo={serverInfo} />
+                    <ServerInfoCard serverInfo={serverInfo} hardwareInfo={hardwareInfo} />
                 </div>
                 <div className="grid-item grid-item-players">
                     <PlayerListCard players={serverInfo.players} />

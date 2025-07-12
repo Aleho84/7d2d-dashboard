@@ -5,6 +5,7 @@ const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:3001';
 
 export const useServerInfo = () => {
     const [serverInfo, setServerInfo] = useState(null);
+    const [hardwareInfo, setHardwareInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -32,10 +33,15 @@ export const useServerInfo = () => {
             setError(null);
         });
 
+        socket.on('hardware-info', (data) => {
+            setHardwareInfo(data);
+        });
+
         return () => {
             socket.off('log-update');
+            socket.off('hardware-info');
         };
     }, []);
 
-    return { serverInfo, loading, error };
+    return { serverInfo, hardwareInfo, loading, error };
 };
