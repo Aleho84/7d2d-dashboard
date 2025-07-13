@@ -3,10 +3,11 @@ const path = require('path');
 const { logsDir } = require('../config');
 const { parseLogFile } = require('./logParser');
 const { getLatestLogFile } = require('./logFinder');
-const { sendDiscordNotification } = require('./discordNotifier');
+const { sendDiscordNotification, sendServerStatusNotification } = require('./discordNotifier');
 
-// Cache to store the last known state of players
+// Cache para almacenar el último estado conocido de los jugadores y del servidor
 let playerStateCache = new Map();
+let lastServerStatus = null;
 
 function startLogWatcher(io) {
     const watcher = chokidar.watch(logsDir, {
@@ -16,17 +17,14 @@ function startLogWatcher(io) {
     });
 
     const processPlayerStateChanges = (newPlayers) => {
-        const newPlayerMap = new Map(newPlayers.map(p => [p.name, p]));
+        const newPlayerMap = new Map(newPlayers.map(p => [p.name, p.status]));
 
-        // Check for status changes and new players
-        newPlayerMap.forEach((newPlayer, name) => {
-            const oldPlayer = playerStateCache.get(name);
-            if (!oldPlayer) {
-                // New player detected                
-            } else if (oldPlayer.status !== newPlayer.status) {
-                // Player status has changed
+        // Comprobar cambios de estado y nuevos jugadores
+        newPlayerMap.forEach((status, name) => {
+            const oldStatus = playerStateCache.get(name);
+            if (oldStatus !== status) {
                 let statusMessage;
-                switch (newPlayer.status) {
+                switch (status) {
                     case 'Online':
                         statusMessage = `:white_check_mark: **${name}** ha entrado al juego.`;
                         sendDiscordNotification(statusMessage);
@@ -36,14 +34,32 @@ function startLogWatcher(io) {
                         sendDiscordNotification(statusMessage);
                         break;
                     case 'Connected':
-                        //sendDiscordNotification(`:arrow_right: **${name}** se ha conectado.`);
+                        // Opcional: notificar cuando alguien se conecta al lobby
                         break;
                 }
             }
         });
 
-        // Update the cache
+        // Comprobar si algún jugador se ha desconectado (ya no está en la nueva lista)
+        playerStateCache.forEach((status, name) => {
+            if (!newPlayerMap.has(name)) {
+                const statusMessage = `:octagonal_sign: **${name}** se ha desconectado.`;
+                sendDiscordNotification(statusMessage);
+            }
+        });
+
+        // Actualizar el caché
         playerStateCache = newPlayerMap;
+    };
+
+    const processServerStatusChange = (newStatus) => {
+        // Solo notificar si el estado ha cambiado y no es la primera vez que se detecta
+        if (lastServerStatus !== null && lastServerStatus !== newStatus) {
+            console.log(`[${new Date().toLocaleString()}] Server status changed from ${lastServerStatus} to ${newStatus}. Sending notification.`);
+            sendServerStatusNotification(newStatus);
+        }
+        // Actualizar el último estado conocido
+        lastServerStatus = newStatus;
     };
 
     const emitLogUpdate = async (filePath) => {
@@ -51,9 +67,14 @@ function startLogWatcher(io) {
         try {
             const data = await parseLogFile(filePath);
             io.emit('log-update', data);
+
             if (data.players) {
                 processPlayerStateChanges(data.players);
             }
+            if (data.serverStatus) {
+                processServerStatusChange(data.serverStatus);
+            }
+
         } catch (error) {
             console.error(`[${new Date().toLocaleString()}] Error al parsear o emitir el log ${filePath}:`, error);
             io.emit('log-error', { file: filePath, message: error.message });
@@ -91,7 +112,7 @@ function startLogWatcher(io) {
 
     const pollingInterval = setInterval(pollLatestLog, 30000);
     
-    // Initial poll to populate cache
+    // Sondeo inicial para poblar el caché
     pollLatestLog();
 
     return { watcher, pollingInterval };

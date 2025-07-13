@@ -4,7 +4,7 @@ const sendDiscordNotification = async (message) => {
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
     if (!webhookUrl) {
-        console.log(`[${new Date().toLocaleString()}] Discord webhook URL not configured. Skipping notification.`);
+        // No logueamos nada si no está configurado, para no llenar la consola.
         return;
     }
 
@@ -18,4 +18,28 @@ const sendDiscordNotification = async (message) => {
     }
 };
 
-module.exports = { sendDiscordNotification };
+const sendServerStatusNotification = async (status) => {
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+    if (!webhookUrl) return;
+
+    const isOnline = status === 'Online';
+    const embed = {
+        title: `Server is now ${status}`,
+        color: isOnline ? 3066993 : 15158332, // Verde para Online, Rojo para Offline
+        timestamp: new Date().toISOString(),
+        footer: {
+            text: '7D2D Real-Time Dashboard'
+        }
+    };
+
+    try {
+        await axios.post(webhookUrl, {
+            username: '7D2D Server Monitor',
+            embeds: [embed]
+        });
+    } catch (error) {
+        console.error(`[${new Date().toLocaleString()}] Error sending server status notification:`, error.message);
+    }
+};
+
+module.exports = { sendDiscordNotification, sendServerStatusNotification };
