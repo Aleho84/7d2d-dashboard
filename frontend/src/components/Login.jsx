@@ -21,7 +21,7 @@ const Login = ({ setToken }) => {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>Admin Login</h2>
+        <h2>7DTD Dashboard Login</h2>
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <label>Username</label>
