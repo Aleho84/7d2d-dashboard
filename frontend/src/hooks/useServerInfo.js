@@ -3,7 +3,7 @@ import { socket } from '../services/socketService';
 
 const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:3001';
 
-export const useServerInfo = () => {
+export const useServerInfo = (token) => {
     const [serverInfo, setServerInfo] = useState(null);
     const [hardwareInfo, setHardwareInfo] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -11,8 +11,18 @@ export const useServerInfo = () => {
 
     useEffect(() => {
         const fetchInitialData = async () => {
+            if (!token) {
+                setLoading(false);
+                setError('No authentication token provided.');
+                return;
+            }
+
             try {
-                const response = await fetch(`${SOCKET_URL}/api/server-info`);
+                const response = await fetch(`${SOCKET_URL}/api/server-info`, {
+                    headers: {
+                        'x-auth-token': token,
+                    },
+                });
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -41,7 +51,7 @@ export const useServerInfo = () => {
             socket.off('log-update');
             socket.off('hardware-info');
         };
-    }, []);
+    }, [token]);
 
     return { serverInfo, hardwareInfo, loading, error };
 };

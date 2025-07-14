@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Login from './components/Login';
 import { useServerInfo } from './hooks/useServerInfo';
 import ServerInfoCard from './components/ServerInfoCard';
 import GameSettingsCard from './components/GameSettingsCard';
@@ -9,7 +10,20 @@ import TelnetConsole from './components/TelnetConsole';
 import { FiAlertTriangle } from 'react-icons/fi';
 
 function App() {
-    const { serverInfo, hardwareInfo, loading, error } = useServerInfo();
+    const [token, setToken] = useState(localStorage.getItem('token'));
+    const { serverInfo, hardwareInfo, loading, error } = useServerInfo(token);
+
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem('token', token);
+        } else {
+            localStorage.removeItem('token');
+        }
+    }, [token]);
+
+    if (!token) {
+        return <Login setToken={setToken} />;
+    }
 
     // Un estado de carga que no sea un simple texto
     if (loading) {

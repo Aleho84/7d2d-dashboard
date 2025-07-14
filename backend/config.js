@@ -9,5 +9,6 @@ module.exports = {
         host: process.env.GAME_HOST || '127.0.0.1',
         port: process.env.TELNET_PORT || 8081,
         password: process.env.TELNET_PASSWORD || ''        
-    }
+    },
+    jwtSecret: process.env.JWT_SECRET || 'supersecret'
 };
