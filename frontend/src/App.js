@@ -7,11 +7,15 @@ import GameSettingsCard from './components/GameSettingsCard';
 import PlayerListCard from './components/PlayerListCard';
 import RawLogCard from './components/RawLogCard';
 import TelnetConsole from './components/TelnetConsole';
-import { FiAlertTriangle } from 'react-icons/fi';
+import { FiAlertTriangle, FiLogOut } from 'react-icons/fi';
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const { serverInfo, hardwareInfo, loading, error } = useServerInfo(token);
+
+    const handleLogout = () => {
+        setToken(null);
+    };
 
     useEffect(() => {
         if (token) {
@@ -49,8 +53,14 @@ function App() {
     return (
         <div className="app-container">
             <header className="app-header-themed">
-                <h1>7 DAYS TO DIE</h1>
-                <span>Los Tokones de Tokonas</span>
+                <div className="header-title">
+                    <h1>7 DAYS TO DIE</h1>
+                    <span>Los Tokones de Tokonas</span>
+                </div>
+                <button onClick={handleLogout} className="logout-button">
+                    <FiLogOut />
+                    <span>Logout</span>
+                </button>
             </header>
             <main className="dashboard-grid">
                 <div className="grid-item grid-item-server-info">

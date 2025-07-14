@@ -7,22 +7,24 @@ const config = require('../config');
 // Modelo de usuario (simulado en memoria por ahora)
 const users = [];
 
-// Crear usuario admin por defecto
 (async () => {
   try {
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('password', salt);
+    const hashedPassword = await bcrypt.hash('tuvieja', salt);
     const adminUser = {
       id: 1,
       username: 'admin',
       password: hashedPassword,
     };
     users.push(adminUser);
-    console.log('Default admin user created');
+    console.log(`[${new Date().toLocaleString()}] Default admin user created`);
   } catch (err) {
     console.error('Error creating default admin user:', err);
   }
 })();
+
+// Exportar users para poder resetearlo en los tests
+router.users = users;
 
 // @route   POST api/auth/register
 // @desc    Register a user

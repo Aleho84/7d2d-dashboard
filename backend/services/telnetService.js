@@ -21,11 +21,15 @@ function executeTelnetCommand(command) {
         let buffer = '';
         let state = 'CONNECTING'; // Estado inicial de nuestra máquina de estados.
         let commandResponse = '';
+        let resolved = false; // Flag para asegurar que la promesa se resuelva/rechace una sola vez
 
         // Implementamos un timeout para evitar que la conexión se quede colgada.
         const connectionTimeout = setTimeout(() => {
-            client.destroy(); // Cierra el socket forzosamente.
-            reject(new Error('Timeout: La conexión al servidor Telnet tardó demasiado.'));
+            if (!resolved) {
+                client.destroy(); // Cierra el socket forzosamente.
+                reject(new Error('Timeout: La conexión al servidor Telnet tardó demasiado.'));
+                resolved = true;
+            }
         }, 10000); // 10 segundos de espera.
 
         client.connect(telnet.port, telnet.host || '127.0.0.1', () => {
@@ -57,9 +61,12 @@ function executeTelnetCommand(command) {
                         if (PROMPT_COMMAND_EXECUTED_END.some(item => line.includes(item))) {
                             // Aquí terminamos de recibir la respuesta del comando.
                             commandResponse += line + '\n'; // Acumulamos la ultima respuesta del comando.
-                            clearTimeout(connectionTimeout); // Limpiamos el timeout ya que hemos recibido la respuesta.
-                            resolve(commandResponse.trim());
-                            client.end(); // Cerramos la conexión de forma limpia.
+                            if (!resolved) {
+                                clearTimeout(connectionTimeout); // Limpiamos el timeout ya que hemos recibido la respuesta.
+                                resolve(commandResponse.trim());
+                                resolved = true;
+                                client.end(); // Cerramos la conexión de forma limpia.
+                            }
                         } else {
                             commandResponse += line + '\n'; // Acumulamos la respuesta del comando.
                         }
@@ -69,15 +76,21 @@ function executeTelnetCommand(command) {
         });
 
         client.on('close', () => {
-            clearTimeout(connectionTimeout); // Limpiamos el timeout si la conexión se cierra bien.
+            if (!resolved) {
+                clearTimeout(connectionTimeout); // Limpiamos el timeout si la conexión se cierra bien.
+                resolve(commandResponse.trim());
+                resolved = true;
+            }
             console.log('Conexión Telnet cerrada.');
-            resolve(commandResponse.trim());
         });
 
         client.on('error', (err) => {
-            clearTimeout(connectionTimeout);
-            console.error('Error de Telnet:', err);
-            reject(err);
+            if (!resolved) {
+                clearTimeout(connectionTimeout);
+                console.error('Error de Telnet:', err);
+                reject(err);
+                resolved = true;
+            }
         });
     });
 }
