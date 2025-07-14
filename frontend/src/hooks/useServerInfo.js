@@ -25,7 +25,7 @@ export const useServerInfo = (token) => {
                         // Si el token es inválido, el servidor devolverá 401
                         if (response.status === 401) {
                             // Opcional: podrías querer limpiar el token aquí
-                            // localStorage.removeItem('token');
+                            localStorage.removeItem('token');
                         }
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
