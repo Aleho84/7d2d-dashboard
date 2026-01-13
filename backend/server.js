@@ -21,6 +21,11 @@ const io = initializeSocket(server);
 startLogWatcher(io);
 
 // Rutas de la API
+app.use('/',
+    async (req, res) => {
+        res.json('Welcome to the 7 Days to Die Dashboard API');
+    }
+);
 app.use('/api', apiRoutes);
 app.use('/api/auth', authRoutes);
 
